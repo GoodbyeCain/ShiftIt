@@ -19,7 +19,7 @@
 
 
 #import <Cocoa/Cocoa.h>
-#import <ShortcutRecorder/ShortcutRecorder.h>
+#import "ShortcutRecorderCompatibility.h"
 
 @interface PreferencesWindowController : NSWindowController {
  @private

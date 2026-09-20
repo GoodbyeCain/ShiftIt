@@ -17,8 +17,6 @@
  
  */
 
-#import <Sparkle/Sparkle.h>
-#import "SBSystemPreferences.h"
 #import "ShiftItAppDelegate.h"
 #import "ShiftItApp.h"
 #import "WindowGeometryShiftItAction.h"
@@ -351,17 +349,14 @@ NSDictionary *allShiftActions = nil;
                         NSDictionary *options = @{(id) kAXTrustedCheckOptionPrompt : @NO};
                         AXIsProcessTrustedWithOptions((CFDictionaryRef) options);
 
-                        SBSystemPreferencesApplication *prefs = [SBApplication applicationWithBundleIdentifier:@"com.apple.systempreferences"];
-                        [prefs activate];
+                        NSString *preferencesURLString;
+                        if (@available(macOS 13.0, *)) {
+                            preferencesURLString = @"x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Accessibility";
+                        } else {
+                            preferencesURLString = @"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility";
+                        }
 
-                        SBSystemPreferencesPane *pane = [[prefs panes] find:^BOOL(SBSystemPreferencesPane *elem) {
-                            return [[elem id] isEqualToString:@"com.apple.preference.security"];
-                        }];
-                        SBSystemPreferencesAnchor *anchor = [[pane anchors] find:^BOOL(SBSystemPreferencesAnchor *elem) {
-                            return [[elem name] isEqualToString:@"Privacy_Accessibility"];
-                        }];
-
-                        [anchor reveal];
+                        [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:preferencesURLString]];
                     }
                         break;
                     default:
@@ -730,7 +725,7 @@ NSDictionary *allShiftActions = nil;
 // the system profile. This method should return an array of dictionaries
 // with keys: "key", "value", "displayKey", "displayValue", the latter two
 // being human-readable variants of the former two.
-- (NSArray *)feedParametersForUpdater:(SUUpdater *)updater
+- (NSArray *)feedParametersForUpdater:(id)updater
                  sendingSystemProfile:(BOOL)sendingProfile {
     NSMutableArray *a = [NSMutableArray arrayWithArray:[usageStatistics_ toSparkle]];
 

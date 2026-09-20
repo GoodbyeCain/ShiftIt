@@ -20,12 +20,12 @@
  THE SOFTWARE.
  */
  
-#import <ShortcutRecorder/SRCommon.h>
 #import <objc/message.h>
 
 #import "FMTHotKeyManager.h"
 #import "FMTDefines.h"
 #import "GTMLogger.h"
+#import "ShortcutRecorderCompatibility.h"
 
 @interface FMTHotKey (Private)
 
@@ -106,12 +106,12 @@ static inline OSStatus hotKeyHandler(EventHandlerCallRef inHandlerCallRef,EventR
 	GetEventParameter(inEvent,kEventParamDirectObject,typeEventHotKeyID,NULL,
 					  sizeof(hotKeyID),NULL,&hotKeyID);
 	
-	NSNumber *id = [NSNumber numberWithInt:hotKeyID.id];
+	NSNumber *hotKeyIdentifier = [NSNumber numberWithInt:hotKeyID.id];
 	
-	TWHotKeyRegistartion* hotKeyReg = [allHotKeys objectForKey:id];
+	TWHotKeyRegistartion* hotKeyReg = [allHotKeys objectForKey:hotKeyIdentifier];
 	
 	if (hotKeyReg != nil) {
-		objc_msgSend([hotKeyReg provider], [hotKeyReg handler], [hotKeyReg userData]);
+		((void (*)(id, SEL, id))objc_msgSend)([hotKeyReg provider], [hotKeyReg handler], [hotKeyReg userData]);
 		return noErr;
 	} else {
 		return eventNotHandledErr;

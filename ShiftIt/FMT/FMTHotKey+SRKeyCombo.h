@@ -22,7 +22,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <ShortcutRecorder/SRCommon.h>
+#import "ShortcutRecorderCompatibility.h"
 
 #import "FMTHotKey.h"
 
